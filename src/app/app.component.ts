@@ -7,4 +7,8 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'ChallengesV1WDisney';
+
+  onClick(){
+    console.log('lorem')
+  }
 }

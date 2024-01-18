@@ -1,0 +1,53 @@
+<ng-container
+*ngIf="question?.result?.id === section?.sectionOccurrenceId"
+>
+
+
+    <app-list
+    (click)="onIsOpen()"
+  [section]="section?.name"
+  [total_questions]="question?.result.questions.length">
+  </app-list>
+</ng-container>
+
+<section
+*ngIf="isOpen">
+<section>
+  <section class="flex m-10 pointer" *ngFor="let item of question?.result.questions;">
+    <section class="w-full descriptions p-3.5 shadow-lg font-sans text-1xl">
+        <h1>    {{item.displayText}}        </h1>
+        {{item.numberLevel}}
+        <section *ngIf="item.type">
+          <section *ngFor="let choiceOptions of item.choiceOptions">
+            <section class="flex items-center mb-4">
+                  <input id="default-radio-1" type="{{item.type}}" value="" name="default-radio" class="w-5 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                  <label for="default-radio-1" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{choiceOptions.label}}</label>
+            </section>
+            <section *ngFor="let dependentDropdown of item.dependentQuestion">
+
+              ITEM NUMBERLEVL: {{item.numberLevel}}
+              ITEM DEPENDENT QUESTION DEPENDENT DROPDOWN: {{dependentDropdown?.numberLevel}}
+              <section class="flex items-center mb-4">
+                <input id="default-radio-1" type="{{item.type}}" value="" name="default-radio" class="w-5 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                <label for="default-radio-1" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{choiceOptions.label}}</label>
+            </section>
+              <!-- {{dependentDropdown.numberLevel === item.numberLevel}}
+              {{dependentDropdown.numberLevel}}
+              {{item.numberLevel}} -->
+          </section>
+
+            <!-- {{item?.dependentQuestion?.dependentDropdown?.numberLevel === item.numberLevel}} -->
+
+
+            </section>
+
+
+          </section>
+        </section>
+
+    <section>
+  </section>
+
+</section>
+
+
