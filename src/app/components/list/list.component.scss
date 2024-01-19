@@ -2,7 +2,7 @@
   cursor:pointer;
   .order-number{
     color: white;
-    background-color: #545873;
+    background-color: #7f89a0;
     align-content: center;
     align-items: center;
     align-self: center  ;
@@ -10,6 +10,9 @@
 .descriptions{
     background:#424141;
     color:white;
-
-}
+    &.active{
+      color:#424141;
+      background: white;
+    }
+  }
 }

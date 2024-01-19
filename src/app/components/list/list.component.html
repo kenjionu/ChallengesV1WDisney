@@ -1,0 +1,13 @@
+<section class="flex mt-10 mx-10 pointer">
+    <section class="w-1/6 order-number p-3.5 shadow-lg font-sans text-5xl">1</section>
+    <section [ngClass]="listClass"  class="w-5/6 descriptions p-3.5 shadow-lg font-sans text-1xl">
+      <section *ngIf="listClass.active === false">
+          <h1 class="font-black">{{section}}</h1>
+          <p>Total questions: {{total_questions}}, answered: {{answered}}</p>
+        </section>
+        <section *ngIf="listClass.active === true">
+          <h1 class="font-black">{{section}}</h1>
+          <p>{{answered}} to {{total_questions}}</p>
+        </section>
+    </section>
+</section>
