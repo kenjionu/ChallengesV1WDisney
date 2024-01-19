@@ -3,13 +3,16 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 
 import { SharedModule } from './components/shared.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
-        SharedModule
+        SharedModule,
+        FormsModule,
+        ReactiveFormsModule
       ],
       declarations: [
         AppComponent,

@@ -84,6 +84,7 @@ export class HomeComponent implements OnInit {
 
   checkFrm(){
     this.submitted = true;
+    this.onCountValidation()
 
     if (this.sectionForm.invalid) {
 
@@ -97,5 +98,16 @@ export class HomeComponent implements OnInit {
     this.submitted = false;
     this.sectionForm.reset();
   }
+
+  onCountValidation(){
+    const myMap = new Map(
+      Object
+          .keys(this.sectionForm.value)
+          .map(
+              key => [key, this.sectionForm.value[key]]
+          )
+    )
+    console.log(myMap)
+}
 
 }
