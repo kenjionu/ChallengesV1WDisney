@@ -2,14 +2,15 @@ import { QuestionsService } from 'src/app/services/questions.service';
 import { SectionsService } from './../../services/sections.service';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  sectionForm:any;
+  submitted = false;
+  answeredForm: number = 0;
+  public sectionForm! :FormGroup;
   checkvalueClick: any = '';
   listClass: any = '';
   dropdownResponse: any = '';
@@ -17,7 +18,6 @@ export class HomeComponent implements OnInit {
   section: any = [];
   question: any = [];
   isOpen: boolean = false;
-  private destroy$ = new Subject<void>();
 
   constructor(
     private _sectionsService: SectionsService,
@@ -45,7 +45,6 @@ export class HomeComponent implements OnInit {
   getQuestionsById() {
     this._questionsService.getAllQuestionsServices().then((questions) => {
       this.question = questions[0];
-
     });
 
   }
@@ -54,7 +53,7 @@ export class HomeComponent implements OnInit {
     this.isOpen = !this.isOpen;
   }
 
-  onClickOptions(questions: any, choiceOptions: any) {
+  onClickOptions(questions: any, choiceOptions: any, type: any) {
     console.log(
       '[Questions] ID: ' +
         questions +
@@ -65,16 +64,38 @@ export class HomeComponent implements OnInit {
         ' {LABEL}: ' +
         choiceOptions.label
     );
-    this.checkvalueClick  = choiceOptions.value;
+    this.validationType(choiceOptions, type);
+  }
+
+  validationType(choiceOptions:any, type:any){
+    if(type === 'three_buttons'){
+      this.sectionForm.get('questionMedium')?.setValue(choiceOptions.value)
+    }
+    if(type === 'radio'){
+      this.sectionForm.get('questionHS')?.setValue(choiceOptions.value)
+    }
   }
 
   receiveMessage(msg: any) {
-    console.log(msg)
     this.dropdownResponse = msg;
+
+    this.sectionForm.get('questionDropdownParent')?.setValue(msg)
   }
 
-  checkFrm(data:any){
+  checkFrm(){
+    this.submitted = true;
 
+    if (this.sectionForm.invalid) {
+
+      console.log('invalid');
+    }
+
+    console.log(JSON.stringify(this.sectionForm.value, null, 2));
+  }
+
+  onReset(): void {
+    this.submitted = false;
+    this.sectionForm.reset();
   }
 
 }

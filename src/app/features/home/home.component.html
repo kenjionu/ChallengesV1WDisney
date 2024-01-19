@@ -1,75 +1,114 @@
 <ng-container *ngIf="question?.result?.id === section?.sectionOccurrenceId">
-
-
   <app-list
-  [ngClass]="listClass"
-  [listClass]="{'active' : isOpen }"
-  (click)="onIsOpen()" [section]="section?.name" [total_questions]="question?.result.questions.length">
+    [ngClass]="listClass"
+    [listClass]="{ active: isOpen }"
+    (click)="onIsOpen()"
+    [section]="section?.name"
+    [total_questions]="question?.result.questions.length"
+  >
   </app-list>
 </ng-container>
 
 <section *ngIf="isOpen">
+  <form *ngIf="sectionForm" (ngSubmit)="checkFrm()" [formGroup]="sectionForm">
+    <section
+      class="flex pointer mx-10"
+      *ngFor="let item of question?.result.questions"
+    >
+      <section class="w-full descriptions p-3.5 shadow-lg font-sans text-1xl">
+        <h1 class="font-bold">* {{ item.displayText }}</h1>
+        <section [ngSwitch]="item.type">
+          <section *ngSwitchCase="'dropdown'">
+            <app-select
+              [data]="item"
+              (click)="(onClickOptions)"
+              (valueResponse)="receiveMessage($event)"
+            >
+            </app-select>
+          </section>
 
-  <form (ngSubmit)="checkFrm(sectionForm.value)" [formGroup]="sectionForm">
-  <section class="flex pointer mx-10" *ngFor="let item of question?.result.questions;">
-    <section class="w-full descriptions p-3.5 shadow-lg font-sans text-1xl">
-      <h1 class="font-bold">* {{item.displayText}}</h1>
-      <section [ngSwitch]="item.type">
-        <section *ngSwitchCase="'dropdown'">
-          <app-select [data]="item" (click)="onClickOptions"
-          (valueResponse)="receiveMessage($event)">
-          </app-select>
-        </section>
+          <section *ngSwitchCase="'three_buttons'">
+            <section *ngFor="let choiceOptions of item.choiceOptions">
+              <div class="flex flex-col rounded-md shadow-sm" role="group">
+                <button
+                  type="button"
+                  (click)="onClickOptions(item.id, choiceOptions, item.type)"
+                  class="w-full my-2 px-4 py-2 text-sm font-medium text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
+                >
+                  {{ choiceOptions.label }}
+                </button>
+              </div>
+            </section>
+          </section>
 
-        <section *ngSwitchCase="'three_buttons'">
-          <section *ngFor="let choiceOptions of item.choiceOptions">
-            <div class="flex flex-col rounded-md shadow-sm" role="group">
-              <button type="button" (click)="onClickOptions(item.id, choiceOptions)"
-                class=" w-full my-2 px-4 py-2 text-sm font-medium text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
-                {{choiceOptions.label}}
-              </button>
+          <section *ngSwitchDefault>
+            <section *ngFor="let choiceOptions of item.choiceOptions">
+              <section class="flex items-center mb-4">
+                <input
+                  formControlName="questionHS"
+                  type="{{ item.type }}"
+                  name="default-radio"
+                  class="w-5 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  (change)="onClickOptions(item.id, choiceOptions, item.type)"
+                />
+
+                <label
+                  for="default-radio-1"
+                  class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  >{{ choiceOptions.label }}</label
+                >
+              </section>
+            </section>
+            <div *ngIf="sectionForm.get('questionHS')?.errors?.['required']">
+              questionHS is required.
             </div>
           </section>
         </section>
 
-        <section *ngSwitchDefault>
-          <section *ngFor="let choiceOptions of item.choiceOptions">
-            <section class="flex items-center mb-4">
-              <input formControlName="questionHS" id="default-radio-1" type="{{item.type}}" value="" name="default-radio"
-                class="w-5 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                (change)="onClickOptions(item.id, choiceOptions);">
-
-              <label for="default-radio-1"
-                class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{choiceOptions.label}}</label>
-
-
-            </section>
-
-          </section>
-        </section>
-      </section>
-
-
-      <section *ngIf="item.responseToDisplayDependentQuestionList === dropdownResponse">
-        <section *ngFor="let dependentQuestion of  item?.dependentQuestion">
-          <h1> {{dependentQuestion.displayText}} </h1>
-
-          <section *ngFor="let choiceOptions of item.choiceOptions">
-            <section class="flex items-center mb-4">
-              <input id="default-{{item.type}}" type="text" value="" name="default-radio"
-                class="w-10 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-              <label for="default-{{item.type}}"
-                class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{choiceOptions.label}}</label>
+        <section
+          *ngIf="
+            item.responseToDisplayDependentQuestionList === dropdownResponse
+          "
+        >
+          <section *ngFor="let dependentQuestion of item?.dependentQuestion">
+            <section class="flex flex-wrap mb-4">
+              <section class="w-full">
+                <label
+                  for="default-{{ item.type }}"
+                  class="w-full ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                >
+                  <h1>{{ dependentQuestion.displayText }}</h1>
+                </label>
+              </section>
+              <section class="w-full">
+                <input
+                  type="text"
+                  formControlName="questionDependentDropdown"
+                  [maxLength]="dependentQuestion.responseMaxLength"
+                  name="default-radio"
+                  class="h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                />
+              </section>
             </section>
           </section>
         </section>
       </section>
-
     </section>
-
-  </section>
-
-  <button type="submit">Submit</button>
+    <section class="flex pointer mx-10">
+      <button
+        class="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+        type="submit"
+        [disabled]="!sectionForm.valid"
+      >
+        Submit
+      </button>
+      <section>
+        <button
+        (click)="onReset()"
+        type="button"
+        class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-full border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+        Reset</button>
+      </section>
+    </section>
   </form>
 </section>
-  <!-- </form> -->
